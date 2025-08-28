@@ -33,7 +33,7 @@ const credentialsPath = path.join(CREDS_DIR, ".gdrive-server-credentials.json");
 async function authenticateWithTimeout(
   keyfilePath: string,
   SCOPES: string[],
-  timeoutMs = 30000,
+  timeoutMs = 60000,
 ): Promise<any | null> {
   const timeoutPromise = new Promise((_, reject) =>
     setTimeout(() => reject(new Error("Authentication timed out")), timeoutMs),
@@ -60,6 +60,12 @@ async function authenticateAndSaveCredentials() {
   console.error("Using keyfile path:", keyfilePath);
 
   const auth = await authenticateWithTimeout(keyfilePath, SCOPES);
+  
+  if (!auth) {
+    console.error("Authentication failed or timed out");
+    return null;
+  }
+
   if (auth) {
     const newAuth = new google.auth.OAuth2();
     newAuth.setCredentials(auth.credentials);
@@ -102,6 +108,13 @@ export async function loadCredentialsQuietly() {
   try {
     const savedCreds = JSON.parse(fs.readFileSync(credentialsPath, "utf-8"));
     console.error("Loaded existing credentials with scopes:", savedCreds.scope);
+    
+    // Check if this is a mock credential for testing
+    if (savedCreds.access_token === "mock_access_token_for_testing") {
+      console.error("WARNING: Using mock credentials for testing - API calls will fail");
+      console.error("To use real authentication, delete .gdrive-server-credentials.json and restart");
+    }
+    
     oauth2Client.setCredentials(savedCreds);
 
     const expiryDate = new Date(savedCreds.expiry_date);
