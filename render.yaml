@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: gdrive-mcp-api
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: node start-render.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_ID
+        value: 29418777071-jui1tt5agg5m9t5fr4fv5c4kchovlqat.apps.googleusercontent.com
+      - key: CLIENT_SECRET
+        value: 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
+      - key: API_KEY
+        value: L6R1sC7nqnsDdz8xqD2Jmru5944zIkujnPRBn7BkZmu9OBYU206tiuKhkVTt8USS
+      - key: GDRIVE_CREDS_DIR
+        value: /opt/render/project/src
