@@ -15,3 +15,9 @@ services:
         value: L6R1sC7nqnsDdz8xqD2Jmru5944zIkujnPRBn7BkZmu9OBYU206tiuKhkVTt8USS
       - key: GDRIVE_CREDS_DIR
         value: /opt/render/project/src
+      - key: GOOGLE_ACCESS_TOKEN
+        sync: false
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: false
+      - key: GOOGLE_TOKEN_EXPIRY
+        value: "1756391338571"
