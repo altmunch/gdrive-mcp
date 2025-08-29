@@ -45,4 +45,4 @@ console.log('✓ OAuth keys file created');
 console.log('🚀 Starting Comprehensive REST API server...');
 
 // Start the Comprehensive REST API server
-require('./dist/comprehensive-rest-api-server.js');
+require(path.join(__dirname, 'dist', 'comprehensive-rest-api-server.js'));
