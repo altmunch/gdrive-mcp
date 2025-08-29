@@ -29,7 +29,8 @@
     "prepare": "npm run build",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
-    "start:http": "node dist/http-server.js"
+    "start:http": "node dist/http-server.js",
+    "start:rest": "node dist/rest-api-server.js"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
