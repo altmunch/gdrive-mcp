@@ -9,8 +9,9 @@ export const SCOPES = [
 ];
 
 // Get credentials directory from environment variable or use default
-// Fix: Hardcode correct path for Cloud Run container
-const CREDS_DIR = "/app/credentials";
+const CREDS_DIR =
+  process.env.GDRIVE_CREDS_DIR ||
+  path.join(path.dirname(new URL(import.meta.url).pathname), "../../../");
 
 
 
@@ -93,36 +94,12 @@ async function authenticateAndSaveCredentials() {
 
 // Try to load credentials without prompting for auth
 export async function loadCredentialsQuietly() {
+  console.error("Attempting to load credentials from:", credentialsPath);
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
   );
-
-  // Check for Google Cloud Secret Manager credentials
-  if (process.env.GOOGLE_CREDENTIALS_JSON && !fs.existsSync(credentialsPath)) {
-    try {
-      console.error("Loading credentials from environment variable");
-      const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
-      fs.writeFileSync(credentialsPath, credentialsJson);
-      console.error("Credentials loaded successfully");
-    } catch (error) {
-      console.error("Failed to load credentials from environment:", error);
-    }
-  }
-
-  // Check for OAuth keys from environment and create the file if needed
-  const keyfilePath = path.join(CREDS_DIR, "gcp-oauth.keys.json");
-  if (process.env.OAUTH_KEYS_JSON && !fs.existsSync(keyfilePath)) {
-    try {
-      console.error("Loading OAuth keys from environment variable");
-      const oauthKeysJson = process.env.OAUTH_KEYS_JSON;
-      fs.writeFileSync(keyfilePath, oauthKeysJson);
-      console.error("OAuth keys loaded successfully");
-    } catch (error) {
-      console.error("Failed to load OAuth keys from environment:", error);
-    }
-  }
 
   if (!fs.existsSync(credentialsPath)) {
     console.error("No credentials file found");
