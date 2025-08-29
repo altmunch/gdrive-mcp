@@ -3,13 +3,13 @@ import { GDriveSearchInput, InternalToolResponse } from "./types.js";
 
 export const schema = {
   name: "gdrive_search",
-  description: "Search for files in Google Drive",
+  description: "Search for files and folders in Google Drive with advanced filtering options",
   inputSchema: {
     type: "object",
     properties: {
       query: {
         type: "string",
-        description: "Search query",
+        description: "Search query. Can use advanced search operators like 'type:document', 'modified > 2024-01-01', 'name contains \"report\"'",
       },
       pageToken: {
         type: "string",
@@ -18,7 +18,17 @@ export const schema = {
       },
       pageSize: {
         type: "number",
-        description: "Number of results per page (max 100)",
+        description: "Number of results per page (max 100, default 10)",
+        optional: true,
+      },
+      includeItemsFromAllDrives: {
+        type: "boolean",
+        description: "Include items from all shared drives (default false)",
+        optional: true,
+      },
+      orderBy: {
+        type: "string",
+        description: "Order results by: 'createdTime', 'folder', 'modifiedByMeTime', 'modifiedTime', 'name', 'quotaBytesUsed', 'recency', 'sharedWithMeTime', 'starred', 'viewedByMeTime'",
         optional: true,
       },
     },
@@ -58,8 +68,10 @@ export async function search(
     q: searchQuery,
     pageSize: args.pageSize || 10,
     pageToken: args.pageToken,
-    orderBy: "modifiedTime desc",
-    fields: "nextPageToken, files(id, name, mimeType, modifiedTime, size)",
+    orderBy: args.orderBy || "modifiedTime desc",
+    includeItemsFromAllDrives: args.includeItemsFromAllDrives || false,
+    supportsAllDrives: true,
+    fields: "nextPageToken, files(id, name, mimeType, modifiedTime, size, parents, webViewLink, createdTime)",
   });
 
   const fileList = res.data.files
