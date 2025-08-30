@@ -13,7 +13,10 @@ export const SCOPES = [
 // Get credentials directory from environment variable or use default
 const CREDS_DIR =
   process.env.GDRIVE_CREDS_DIR ||
-  path.join(path.dirname(new URL(import.meta.url).pathname), "../../../");
+  "/opt/render/project/src";
+
+console.log('GDRIVE_CREDS_DIR environment variable:', process.env.GDRIVE_CREDS_DIR);
+console.log('Using credentials directory:', CREDS_DIR);
 
 
 // Ensure the credentials directory exists
