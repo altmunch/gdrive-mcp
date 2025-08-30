@@ -13,7 +13,7 @@ export const SCOPES = [
 // Get credentials directory from environment variable or use default
 const CREDS_DIR =
   process.env.GDRIVE_CREDS_DIR ||
-  (process.env.RAILWAY_ENVIRONMENT ? "/app" : "/opt/render/project/src");
+  (process.env.RAILWAY_ENVIRONMENT ? "/app" : ".");
 
 console.log('GDRIVE_CREDS_DIR environment variable:', process.env.GDRIVE_CREDS_DIR);
 console.log('Using credentials directory:', CREDS_DIR);
@@ -167,7 +167,7 @@ export async function getValidCredentials(forceAuth = false) {
   }
 
   // On production platforms, never attempt interactive auth - credentials should be pre-created
-  if (process.env.RENDER || process.env.RAILWAY_ENVIRONMENT || process.env.NODE_ENV === 'production') {
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.NODE_ENV === 'production') {
     console.error("Production environment - skipping interactive auth");
     console.error("Credentials should be created by startup script from environment variables");
     return null;
