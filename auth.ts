@@ -4,14 +4,19 @@ import fs from "fs";
 import path from "path";
 
 export const SCOPES = [
-  "https://www.googleapis.com/auth/drive.readonly",
-  "https://www.googleapis.com/auth/spreadsheets",
+  "https://www.googleapis.com/auth/drive", // Full Drive access (read/write/delete)
+  "https://www.googleapis.com/auth/spreadsheets", // Full Sheets access
+  "https://www.googleapis.com/auth/documents", // Full Docs access
+  "https://www.googleapis.com/auth/drive.file", // Access to files created by app
 ];
 
 // Get credentials directory from environment variable or use default
 const CREDS_DIR =
   process.env.GDRIVE_CREDS_DIR ||
-  path.join(path.dirname(new URL(import.meta.url).pathname), "../../../");
+  (process.env.RAILWAY_ENVIRONMENT ? "/app" : ".");
+
+console.log('GDRIVE_CREDS_DIR environment variable:', process.env.GDRIVE_CREDS_DIR);
+console.log('Using credentials directory:', CREDS_DIR);
 
 
 
@@ -103,6 +108,8 @@ export async function loadCredentialsQuietly() {
 
   if (!fs.existsSync(credentialsPath)) {
     console.error("No credentials file found");
+    // In production, credentials should be created by startup script
+    console.error("This is expected on Render.com - credentials are created by startup script");
     return null;
   }
 
@@ -158,6 +165,13 @@ export async function getValidCredentials(forceAuth = false) {
     if (quietAuth) {
       return quietAuth;
     }
+  }
+
+  // On production platforms, never attempt interactive auth - credentials should be pre-created
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.NODE_ENV === 'production') {
+    console.error("Production environment - skipping interactive auth");
+    console.error("Credentials should be created by startup script from environment variables");
+    return null;
   }
 
   return await authenticateAndSaveCredentials();
