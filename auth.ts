@@ -107,6 +107,8 @@ export async function loadCredentialsQuietly() {
 
   if (!fs.existsSync(credentialsPath)) {
     console.error("No credentials file found");
+    // In production, credentials should be created by startup script
+    console.error("This is expected on Render.com - credentials are created by startup script");
     return null;
   }
 
@@ -162,6 +164,13 @@ export async function getValidCredentials(forceAuth = false) {
     if (quietAuth) {
       return quietAuth;
     }
+  }
+
+  // On Render.com, never attempt interactive auth - credentials should be pre-created
+  if (process.env.RENDER || process.env.NODE_ENV === 'production') {
+    console.error("Production environment - skipping interactive auth");
+    console.error("Credentials should be created by startup script from environment variables");
+    return null;
   }
 
   return await authenticateAndSaveCredentials();
