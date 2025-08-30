@@ -14,6 +14,20 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// JSON error handling middleware
+app.use((error: any, req: any, res: any, next: any) => {
+  if (error instanceof SyntaxError && 'body' in error) {
+    console.error('JSON Parse Error:', error.message);
+    console.error('Request body:', req.body);
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Invalid JSON format in request body',
+      details: error.message 
+    });
+  }
+  next(error);
+});
+
 // Ensure we have valid credentials before making API calls
 async function ensureAuth() {
   const auth = await getValidCredentials();
