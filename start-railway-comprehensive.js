@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
 // Railway.app startup script for Comprehensive REST API server
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 console.log('Setting up credentials for Railway.app Comprehensive REST API server...');
 
@@ -45,4 +49,4 @@ console.log('✓ OAuth keys file created at:', oauthKeysPath);
 console.log('🚀 Starting Comprehensive REST API server...');
 
 // Start the Comprehensive REST API server
-require(path.join(__dirname, 'dist', 'comprehensive-rest-api-server.js'));
+import(path.join(__dirname, 'dist', 'comprehensive-rest-api-server.js'));
